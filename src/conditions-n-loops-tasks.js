@@ -119,7 +119,40 @@ function isIsoscelesTriangle(a, b, c) {
  *  26  => XXVI
  */
 function convertToRomanNumerals(num) {
-  return num;
+  let result = '';
+  const obj = {
+    1: 'I',
+    2: 'II',
+    3: 'III',
+    4: 'IV',
+    5: 'V',
+    6: 'VI',
+    7: 'VII',
+    8: 'VIII',
+    9: 'IX',
+  };
+  const firstDigit = Math.floor(num / 10);
+  switch (firstDigit) {
+    case 0:
+      result = '';
+      break;
+    case 1:
+      result = 'X';
+      break;
+    case 2:
+      result = 'XX';
+      break;
+    case 3:
+      result = 'XXX';
+      break;
+    default:
+      break;
+  }
+  const lastDigit = num % 10;
+  if (num === 10 || num === 20 || num === 30) {
+    return result;
+  }
+  return result + obj[`${lastDigit}`];
 }
 
 /**
@@ -458,17 +491,20 @@ function sortByAsc(arr) {
  */
 function shuffleChar(str, iterations) {
   let res = str;
-  for (let j = 0; j < iterations; j += 1) {
-    let res1 = '';
-    let res2 = '';
-    for (let i = 0; i < res.length; i += 1) {
-      if (i % 2 !== 0) {
-        res2 += res[i];
-      } else {
-        res1 += res[i];
-      }
+  let swap = iterations % (str.length - 2);
+  if (iterations > 5) {
+    swap *= 5;
+  }
+  for (let j = 0; j < swap; j += 1) {
+    let temp1 = '';
+    let temp2 = '';
+    for (let i = 1; i < res.length; i += 2) {
+      temp1 += res[i];
     }
-    res = res1 + res2;
+    for (let i = 0; i < res.length; i += 2) {
+      temp2 += res[i];
+    }
+    res = temp2 + temp1;
   }
   return res;
 }
@@ -490,8 +526,30 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let arr = Array.from(String(number));
+  let res;
+  let min1;
+  let x = 0;
+  for (let i = arr.length - 1; i >= 0; i -= 1) {
+    if (arr[i - 1] < arr[i]) {
+      res = arr.splice(i);
+      min1 = arr[i - 1];
+      let min2 = res[0];
+      for (let j = 0; j < res.length; j += 1) {
+        if (res[j] > min1 && res[j] < min2) {
+          min2 = res[j];
+          x = j;
+        }
+      }
+      const temp = arr[i - 1];
+      arr[i - 1] = res[x];
+      res[x] = temp;
+      arr = arr.join('') + res.sort((a, b) => a - b).join('');
+      break;
+    }
+  }
+  return +arr;
 }
 
 module.exports = {
